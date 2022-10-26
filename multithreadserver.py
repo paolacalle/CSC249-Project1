@@ -20,6 +20,7 @@ class RequestedThread(threading.Thread):
             try:
                 print("Trying")
                 message = self.connectionSocket.recv(1024)  # TODO: Receive the request message from the client
+                # print(message)
                 filename = message.split()[1]
                 f = open(filename[1:])
                 outputdata = f.read()  # TODO: Store the entire contents of the requested file in a temporary buffer
