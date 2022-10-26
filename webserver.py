@@ -1,14 +1,29 @@
 from socket import *
-import sys # In order to terminate the program
+import sys
+# We are creating a TCP server socket
+# AF_INT is used for IPv4 protocols
+# SOCK_STREAM is used for TCP
 
 serverSocket = socket(AF_INET, SOCK_STREAM)
+
+# # getting the hostname by socket.gethostname() method
+# hostname = gethostname()
+#
+# # getting the IP address using socket.gethostbyname() method
+# ip_address = gethostbyname(hostname)
+#
+# # printing the hostname and ip_address
+# print("Getting local address...")
+# print(f"Hostname: {hostname}")
+# print(f"IP Address: {ip_address}")
 
 # -------------
 # Fill in start
 # -------------
 serverPort = 2003
-serverSocket.bind(('',serverPort))
-serverSocket.listen(1)
+serverSocket.bind(('', serverPort)) #Binds socket to address
+serverSocket.listen(1) #listens to at most 1 connection at a time
+
   # TODO: Assign a port number
   #       Bind the socket to server address and server port
   #       Tell the socket to listen to at most 1 connection at a time
@@ -17,25 +32,27 @@ serverSocket.listen(1)
 # Fill in end
 # -----------
 
+#The server should now be running and listening for incoming connections
 while True:
-    
-    # Establish the connection
-    print('Ready to serve...') 
+
+    print('Ready to serve...')
     
     # -------------
     # Fill in start
     # -------------
-    connectionSocket, addr = serverSocket.accept() # TODO: Set up a new connection from the client
+    clientSocket, addr = serverSocket.accept() # TODO: Set up a new connection from the client
+    # print(f"Connection established from address {addr}")
     # -----------
     # Fill in end
     # -----------
 
+    #If an exception occurs in try block, the rest of the code is skipped.
     try:
         
         # -------------
         # Fill in start
         # -------------
-        message = connectionSocket.recv(1024) # TODO: Receive the request message from the client
+        message = clientSocket.recv(1024) # TODO: Receive the request message from the client
         # -----------
         # Fill in end
         # -----------
@@ -45,7 +62,7 @@ while True:
         filename = message.split()[1]
 
         # Because the extracted path of the HTTP request includes 
-		# a character '\', we read the path from the second character
+		# a character '/', we read the path from the second character; to open our file we just add it after the /
         f = open(filename[1:])
         
         # -------------
@@ -60,7 +77,7 @@ while True:
         # Fill in start
         # -------------
 
-        connectionSocket.sendall('HTTP/1.1 200 OK\nContent-Type: text/html\n\n'.encode())
+        clientSocket.send('HTTP/1.1 200 OK\r\n\r\n'.encode())
 
             # TODO: Send one HTTP header line into socket
         # -----------
@@ -68,21 +85,26 @@ while True:
         # -----------
 
         # Send the content of the requested file to the client
+        # Starts from 0 up to the length of outputdata
         for i in range(0, len(outputdata)):
-            connectionSocket.send(outputdata[i].encode())
-        connectionSocket.send("\r\n".encode())
+            clientSocket.send(outputdata[i].encode()) #sends each item indvidually
+        clientSocket.send("\r\n".encode())
 
-        connectionSocket.close()
+        clientSocket.close()
+
+        break
 
     except IOError:
         # -------------
         # Fill in start
         # -------------
+        # TODO: Send response message for file not found
 
-        connectionSocket.sendall( "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n <doctype html><html><body><center><h1>&#x1f440; 404 Not Found &#x1f440;!!!<h1><center></body></html" .encode())
-            # TODO: Send response message for file not found
-            #       Close client socket
-        connectionSocket.close()
+        clientSocket.send("HTTP/1.1 404 Not Found\r\n\r\n")
+        clientSocket.send("<html><head></head><body><h1>404 Not Found &#x1f440;</h1></body></html>\r\n")
+        clientSocket.close() #Close client socket
+
+        break
         # -----------
         # Fill in end
         # -----------
