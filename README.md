@@ -1,6 +1,6 @@
 # Project 1: DIY Webserver
 
-_Acknowledgments: Given that I have never used socket programming before, I googled a lot of information. To acknowledge all of the resources I used, I will link them below (I may be missing some since I deleted the file I was using to keep track of them):
+Acknowledgments: Given that I have never used socket programming before, I googled a lot of information. To acknowledge all of the resources I used, I will link them below (I may be missing some since I deleted the file I was using to keep track of them):
 
 1) https://www.geeksforgeeks.org/socket-programming-python/
 2) https://www.geeksforgeeks.org/how-to-use-sys-argv-in-python/
