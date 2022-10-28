@@ -1,6 +1,5 @@
 import threading
-from socket import *
-
+from datetime import datetime
 from socket import *
 import sys  # In order to terminate the program
 
@@ -14,7 +13,7 @@ class RequestedThread(threading.Thread):
         print("New connection has been added:", clientAddress)
 
     def run(self):
-        print("Connection found!")
+        print("Connection found!", datetime.now().strftime("%H:%M:%S"))
         while True:
             print("True")
             try:
@@ -32,13 +31,15 @@ class RequestedThread(threading.Thread):
                 self.connectionSocket.send("\r\n".encode())
                 self.connectionSocket.close()
 
+                print("Connection closed")
+
                 break
             except IOError:
                 print("IOError")
                 self.connectionSocket.send("HTTP/1.1 404 Not Found\r\n\r\n".encode())
                 self.connectionSocket.send("<html><head></head><body><h1>404 Not Found &#x1f440;</h1></body></html>\r\n".encode())
                 self.connectionSocket.close()
-
+                rint("Connection closed")
                 break
 
 if __name__ == "__main__":
@@ -58,7 +59,7 @@ if __name__ == "__main__":
         threads.append(newThread)
         newThread.start()
         newThread.join()
-    #http://131.229.40.220:2003/HelloWorld.html
+
     serverSocket.close()
     print(threads)
 sys.exit()  # Terminate the program after sending the corresponding data

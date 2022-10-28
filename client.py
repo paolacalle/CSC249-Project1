@@ -1,6 +1,7 @@
 from socket import *
 import sys
 
+
 server_host = sys.argv[1]
 server_port = sys.argv[2]
 filename = sys.argv[3]
@@ -16,19 +17,18 @@ HTTPMessage = f"GET /{filename} HTTP/1.1\r\nHost: {server_host}:{server_port}\r\
 bytes = str.encode(HTTPMessage)
 
 s.sendall(bytes)
+print("Data Received: \n")
 
-# Recving the data
-allRevieved = []
 while (True):
+    try:
+        inputdata = s.recv(1024)
+        print(inputdata.decode(), end = "")
 
-    inputdata = s.recv(1024)
-
-    allRevieved.append(inputdata)
-
-    if (inputdata == b''):
-        print("Data Recvied:\n", allRevieved)
-        print("Connection closed")
-
+        if (inputdata == b''):
+            print("Connection closed")
+            break
+    except IOError:
+        print("Can't load data")
         break
 
 s.close()
